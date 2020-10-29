@@ -58,7 +58,15 @@ namespace beef_hash
 			
 			return h;
 		}
-
+		
+		/*-------------------------------------------------------------------------------
+		** MurmurHash1Aligned, by Austin Appleby
+		**
+		** Same algorithm as MurmurHash1, but only does aligned reads - should be safer
+		** on certain platforms. 
+		**
+		** Performance should be equal to or better than the simple version.
+		*/
 		public static uint32 HashAligned(void* key, int length, uint32 seed = 0)
 		{
 			uint8* data = (uint8*)key;
@@ -86,7 +94,6 @@ namespace beef_hash
 				int sr = 8 * align;
 				
 				// Mix
-				
 				while (len >= 4) {
 					d = *(uint32*)data;
 					t = (t >> sr) | (d << sl);
@@ -127,7 +134,6 @@ namespace beef_hash
 			
 			//----------
 			// Handle tail bytes
-			
 			switch(len)
 			{
 				case 3: h += ((uint32)data[2]) << 16;
