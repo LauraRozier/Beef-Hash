@@ -50,7 +50,8 @@ namespace beef_hash
 				  	k += 3;
 				}
 
-				switch(len) {
+				switch (len)
+				{
 				    case 12: c += k[2]; b += k[1]; a += k[0]; break;
 				    case 11: c += k[2] & 0xffffff; b += k[1]; a += k[0]; break;
 				    case 10: c += k[2] & 0xffff; b += k[1]; a += k[0]; break;
