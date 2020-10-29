@@ -1,0 +1,5 @@
+FileVersion = 1
+Projects = {Beef-Hash = {Path = "."}, Beef-Hash-Test = {Path = "../Beef-Hash-Test"}}
+
+[Workspace]
+StartupProject = "Beef-Hash-Test"
