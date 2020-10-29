@@ -101,21 +101,21 @@ namespace beef_hash
 			return c;
 		}
 
-		public static mixin Hash(StringView val)
+		public static mixin Hash(StringView val, uint32 initVal = 0)
 		{
-			HashLittle(val.Ptr, val.Length)
+			HashLittle(val.Ptr, val.Length, initVal)
 		}
 
-		public static mixin Hash(int val)
+		public static mixin Hash(int val, uint32 initVal = 0)
 		{
 			var tmp = val;
-			HashLittle(&tmp, sizeof(int))
+			HashLittle(&tmp, sizeof(int), initVal)
 		}
 
-		public static mixin Hash(uint val)
+		public static mixin Hash(uint val, uint32 initVal = 0)
 		{
 			var tmp = val;
-			HashLittle(&tmp, sizeof(uint))
+			HashLittle(&tmp, sizeof(uint), initVal)
 		}
 	}
 }
