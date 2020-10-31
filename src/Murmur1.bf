@@ -30,18 +30,18 @@ namespace beef_hash
 			//----------
 			uint8* data = (uint8*)key;
 			uint32 k;
-			
+
 			while (len >= 4) {
 				k = *(uint32*)data;
-				
+
 				h += k;
 				h *= M_VAL;
 				h ^= h >> 16;
-				
+
 				data += 4;
 				len -= 4;
 			}
-			
+
 			//----------
 			switch(len)
 			{
@@ -49,14 +49,14 @@ namespace beef_hash
 				case 2: h += ((uint32)data[1]) << 8;
 				case 1: h += data[0]; h *= M_VAL; h ^= h >> R_VAL;
 			}
-			
+
 			//----------
 			h *= M_VAL;
 			h ^= h >> 10;
 			h *= M_VAL;
 			return h ^ (h >> 17);
 		}
-		
+
 		/*-------------------------------------------------------------------------------
 		** MurmurHash1Aligned, by Austin Appleby
 		**
@@ -71,26 +71,26 @@ namespace beef_hash
 			uint32 len = (uint32)length;
 			uint32 h = seed ^ (len * M_VAL);
 			uint32 align = (uint32)(*(uint64*)data & 3);
-			
+
 			if (align > 0 && len >= 4) {
 				// Pre-load the temp registers
 				uint32 t = 0, d = 0;
-				
+
 				switch(align)
 				{
 					case 1: t |= ((uint32)data[2]) << 16;
 					case 2: t |= ((uint32)data[1]) << 8;
 					case 3: t |= data[0];
 				}
-				
+
 				t <<= (8 * align);
-				
+
 				data += 4 - align;
 				len -= 4 - align;
-				
-				int sl = 8 * (4 - align);
-				int sr = 8 * align;
-				
+
+				uint32 sl = 8 * (4 - align);
+				uint32 sr = 8 * align;
+
 				// Mix
 				while (len >= 4) {
 					d = *(uint32*)data;
@@ -99,16 +99,15 @@ namespace beef_hash
 					h *= M_VAL;
 					h ^= h >> R_VAL;
 					t = d;
-					
+
 					data += 4;
 					len -= 4;
 				}
-				
+
 				// Handle leftover data in temp registers
 				uint32 pack = len < align ? len : align;
-
 				d = 0;
-				
+
 				switch(pack)
 				{
 					case 3: d |= ((uint32)data[2]) << 16;
@@ -116,7 +115,7 @@ namespace beef_hash
 					case 1: d |= data[0];
 					case 0: h += (t >> sr) | (d << sl); h *= M_VAL; h ^= h >> R_VAL;
 				}
-			
+
 				data += pack;
 				len -= pack;
 			} else {
@@ -124,12 +123,12 @@ namespace beef_hash
 					h += *(uint32*)data;
 					h *= M_VAL;
 					h ^= h >> R_VAL;
-					
+
 					data += 4;
 					len -= 4;
 				}
 			}
-			
+
 			//----------
 			// Handle tail bytes
 			switch(len)
@@ -138,7 +137,7 @@ namespace beef_hash
 				case 2: h += ((uint32)data[1]) << 8;
 				case 1: h += data[0]; h *= M_VAL; h ^= h >> R_VAL;
 			}
-			
+
 			h *= M_VAL;
 			h ^= h >> 10;
 			h *= M_VAL;
