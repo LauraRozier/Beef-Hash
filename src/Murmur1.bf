@@ -18,14 +18,14 @@ namespace beef_hash
 	*/
 	abstract class Murmur1
 	{
-		private const uint32 M_VAL = 0xc6a4a793U;
+		private const uint32 M_VAL = 0xC6A4A793U;
 		private const int R_VAL = 16;
 
 		// https://github.com/rurban/smhasher/blob/master/MurmurHash1.cpp
 		public static uint32 Hash(void* key, int length, uint32 seed = 0)
 		{
 			uint32 len = (uint32)length;
-  			uint32 h = seed ^ ((uint32)len * M_VAL);
+  			uint32 h = seed ^ (len * M_VAL);
 
 			//----------
 			uint8* data = (uint8*)key;
@@ -54,9 +54,7 @@ namespace beef_hash
 			h *= M_VAL;
 			h ^= h >> 10;
 			h *= M_VAL;
-			h ^= h >> 17;
-			
-			return h;
+			return h ^ (h >> 17);
 		}
 		
 		/*-------------------------------------------------------------------------------
@@ -144,9 +142,7 @@ namespace beef_hash
 			h *= M_VAL;
 			h ^= h >> 10;
 			h *= M_VAL;
-			h ^= h >> 17;
-			
-			return h;
+			return h ^ (h >> 17);
 		}
 
 		public static mixin Hash(StringView val, uint32 seed = 0)
