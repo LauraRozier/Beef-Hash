@@ -375,8 +375,8 @@ namespace beef_hash
 				data += 4 - align;
 				len -= 4 - align;
 
-				int sl = 8 * (4 - align);
-				int sr = 8 * align;
+				uint32 sl = 8 * (4 - align);
+				uint32 sr = 8 * align;
 
 				// Mix
 				while (len >= 4) {
