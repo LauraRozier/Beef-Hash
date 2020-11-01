@@ -28,7 +28,8 @@ namespace beef_hash
 #endif
 
 		[Inline]
-		public static uint64 mir_get_key_part(uint8* v, uint len, int relax_p) {
+		public static uint64 mir_get_key_part(uint8* v, uint len, int relax_p)
+		{
 			uint i, start = 0;
 			uint64 tail = 0;
 
@@ -55,20 +56,27 @@ namespace beef_hash
 		private const uint64 p2 = 0X288EEA216831E6A7UL;
 
 		[Inline]
-		public static uint64 mir_mum(uint64 v, uint64 c, int relax_p) {
-			uint64 v1 = v >> 32, v2 = (uint32) v, c1 = c >> 32, c2 = (uint32) c, rm = v2 * c1 + v1 * c2;
+		public static uint64 mir_mum(uint64 v, uint64 c, int relax_p)
+		{
+			uint64 v1 = v >> 32,
+				v2 = (uint32) v,
+				c1 = c >> 32,
+				c2 = (uint32) c,
+				rm = v2 * c1 + v1 * c2;
 			return v1 * c1 + (rm >> 32) + v2 * c2 + (rm << 32);
 		}
 
 		[Inline]
-		public static uint64 mir_round(uint64 state, uint64 v, int relax_p) {
+		public static uint64 mir_round(uint64 state, uint64 v, int relax_p)
+		{
 			uint64 s = state;
 			s ^= mir_mum (v, p1, relax_p);
 			return s ^ mir_mum (s, p2, relax_p);
 		}
 
 		[Inline]
-		public static uint64 mir_hash_1(void* key, uint length, uint64 seed, int relax_p) {
+		public static uint64 mir_hash_1(void* key, uint length, uint64 seed, int relax_p)
+		{
 			uint len = length;
 			uint8* v = (uint8*)key;
 			uint64 r = seed + len;

@@ -109,7 +109,8 @@ namespace beef_hash
 			}
 		}
 
-		public static uint32 Hash(void* key, int length, uint32 seed) {
+		public static uint32 Hash(void* key, int length, uint32 seed)
+		{
 			uint32 len = (uint32)length;
 			// Initialize the hash to a 'random' value
 			uint32 h = seed ^ len;
@@ -457,10 +458,7 @@ namespace beef_hash
 			}
 		}
 
-		public static mixin Hash(StringView val, uint32 seed = 0)
-		{
-			Hash(val.Ptr, val.Length, seed)
-		}
+		public static mixin Hash(StringView val, uint32 seed = 0) { Hash(val.Ptr, val.Length, seed) }
 
 		public static mixin Hash(int val, uint32 seed = 0)
 		{
@@ -474,10 +472,7 @@ namespace beef_hash
 			Hash(&tmp, sizeof(uint), seed)
 		}
 
-		public static mixin HashA(StringView val, uint32 seed = 0)
-		{
-			HashA(val.Ptr, val.Length, seed)
-		}
+		public static mixin HashA(StringView val, uint32 seed = 0) { HashA(val.Ptr, val.Length, seed) }
 
 		public static mixin HashA(int val, uint32 seed = 0)
 		{
@@ -491,10 +486,7 @@ namespace beef_hash
 			HashA(&tmp, sizeof(uint), seed)
 		}
 
-		public static mixin Hash64A(StringView val, uint32 seed = 0)
-		{
-			Hash64A(val.Ptr, val.Length, seed)
-		}
+		public static mixin Hash64A(StringView val, uint32 seed = 0) { Hash64A(val.Ptr, val.Length, seed) }
 
 		public static mixin Hash64A(int val, uint32 seed = 0)
 		{
@@ -508,10 +500,7 @@ namespace beef_hash
 			Hash64A(&tmp, sizeof(uint), seed)
 		}
 
-		public static mixin Hash64B(StringView val, uint32 seed = 0)
-		{
-			Hash64B(val.Ptr, val.Length, seed)
-		}
+		public static mixin Hash64B(StringView val, uint32 seed = 0) { Hash64B(val.Ptr, val.Length, seed) }
 
 		public static mixin Hash64B(int val, uint32 seed = 0)
 		{
@@ -525,10 +514,7 @@ namespace beef_hash
 			Hash64B(&tmp, sizeof(uint), seed)
 		}
 
-		public static mixin HashAligned(StringView val, uint32 seed = 0)
-		{
-			HashAligned(val.Ptr, val.Length, seed)
-		}
+		public static mixin HashAligned(StringView val, uint32 seed = 0) { HashAligned(val.Ptr, val.Length, seed) }
 
 		public static mixin HashAligned(int val, uint32 seed = 0)
 		{
@@ -542,10 +528,7 @@ namespace beef_hash
 			HashAligned(&tmp, sizeof(uint), seed)
 		}
 
-		public static mixin HashNeutral(StringView val, uint32 seed = 0)
-		{
-			HashNeutral(val.Ptr, val.Length, seed)
-		}
+		public static mixin HashNeutral(StringView val, uint32 seed = 0) { HashNeutral(val.Ptr, val.Length, seed) }
 
 		public static mixin HashNeutral(int val, uint32 seed = 0)
 		{

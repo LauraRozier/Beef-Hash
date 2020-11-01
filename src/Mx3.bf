@@ -9,7 +9,8 @@ namespace beef_hash
 	{
 		private const uint64 C = 0xBEA225F9EB34556DUL;
 
-		private static mixin mix(uint64 val) {
+		private static mixin mix(uint64 val)
+		{
 			uint64 x = val;
 			x ^= x >> 32;
 			x *= C;
@@ -20,7 +21,8 @@ namespace beef_hash
 			x ^ (x >> 29)
 		}
 
-		private static mixin mix_stream(uint64 hash, uint64 val) {
+		private static mixin mix_stream(uint64 hash, uint64 val)
+		{
 			uint64 h = hash, x = val;
 			x *= C;
 			x ^= (x >> 57) ^ (x >> 43);
@@ -29,7 +31,8 @@ namespace beef_hash
 			h * C
 		}
 
-		public static uint64 hash(void* buf, uint length, uint64 seed) {
+		public static uint64 hash(void* buf, uint length, uint64 seed)
+		{
 			uint len = length;
 			uint64* buf64 = (uint64*)buf;
 			uint8* tail = (uint8*)(buf64 + len / 8);

@@ -33,7 +33,8 @@ namespace beef_hash
 
 		// Compression function for Merkle-Damgard construction.
 		// This function is generated using the framework provided.
-		private static mixin mix(uint64 h) {				
+		private static mixin mix(uint64 h)
+		{				
 			h ^= h >> 23;		
 			h *= 0x2127599BF4325C37UL;	
 			h ^ (h >> 47)

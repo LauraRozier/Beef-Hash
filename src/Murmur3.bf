@@ -14,29 +14,17 @@ namespace beef_hash
 	// https://github.com/rurban/smhasher/blob/master/MurmurHash3.cpp
 	abstract class Murmur3
 	{
-		private static mixin rotl32(uint32 x, int8 r)
-		{
-			(x << r) | (x >> (32 - r))
-		}
+		private static mixin rotl32(uint32 x, int8 r) { (x << r) | (x >> (32 - r)) }
 
-		private static mixin rotl64(uint64 x, int8 r)
-		{
-			(x << r) | (x >> (64 - r))
-		}
+		private static mixin rotl64(uint64 x, int8 r) { (x << r) | (x >> (64 - r)) }
 
 		/*-------------------------------------------------------------------------------
 		** Block read - if your platform needs to do endian-swapping or can only handle
 		** aligned reads, do the conversion here
 		*/
-		private static mixin getblock32(uint32* p, int i)
-		{
-			p[i]
-		}
+		private static mixin getblock32(uint32* p, int i) { p[i] }
 
-		private static mixin getblock64(uint64* p, int i)
-		{
-			p[i]
-		}
+		private static mixin getblock64(uint64* p, int i) { p[i] }
 
 		/*-------------------------------------------------------------------------------
 		** Finalization mix - force all bits of a hash block to avalanche
@@ -73,8 +61,7 @@ namespace beef_hash
 			// body
 			uint32* blocks = (uint32*)data;
 
-			for (int i = 0; i < nblocks; i++)
-			{
+			for (int i = 0; i < nblocks; i++) {
 				uint32 k = getblock32!(blocks, i);
 
 				k *= c1;
@@ -130,8 +117,7 @@ namespace beef_hash
 			// body
 			uint32 * blocks = (uint32*)(data);
 
-			for (int i = 0; i < nblocks; i++)
-			{
+			for (int i = 0; i < nblocks; i++) {
 				uint32 k1 = getblock32!(blocks,i * 4);
 				uint32 k2 = getblock32!(blocks,i * 4 + 1);
 				uint32 k3 = getblock32!(blocks,i * 4 + 2);
@@ -231,7 +217,8 @@ namespace beef_hash
 			return (uint8*)&uint32[4](h1, h2, h3, h4);
 		}
 
-		public static void Hash_x86_128(void* key, int length, uint32 seed, String outStr) {
+		public static void Hash_x86_128(void* key, int length, uint32 seed, String outStr)
+		{
 			uint32* tmp = (uint32*)Hash_x86_128(key, length, seed);
 
 			tmp[0].ToString(outStr, "X", null);
@@ -256,8 +243,7 @@ namespace beef_hash
 			// body
 			uint64* blocks = (uint64*)data;
 
-			for (int i = 0; i < nblocks; i++)
-			{
+			for (int i = 0; i < nblocks; i++) {
 				uint64 k1 = getblock64!(blocks, i * 2);
 				uint64 k2 = getblock64!(blocks, i * 2 + 1);
 
@@ -323,7 +309,8 @@ namespace beef_hash
 			return (uint8*)&uint64[2](h1, h2);
 		}
 
-		public static void Hash_x64_128(void* key, int length, uint32 seed, String outStr) {
+		public static void Hash_x64_128(void* key, int length, uint32 seed, String outStr)
+		{
 			uint64* tmp = (uint64*)Hash_x86_128(key, length, seed);
 
 			tmp[0].ToString(outStr, "X", null);
@@ -377,10 +364,7 @@ namespace beef_hash
 #endif
 		}
 
-		public static mixin Hash_32(StringView val, uint32 seed = 0)
-		{
-			Hash_32(val.Ptr, val.Length, seed)
-		}
+		public static mixin Hash_32(StringView val, uint32 seed = 0) { Hash_32(val.Ptr, val.Length, seed) }
 
 		public static mixin Hash_32(int val, uint32 seed = 0)
 		{
