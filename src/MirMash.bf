@@ -2,7 +2,6 @@ using System;
 
 namespace beef_hash
 {
-	// https://github.com/rurban/smhasher/blob/master/mir-hash.h
 	/* This file is a part of MIR project.
 	** Copyright (C) 2018, 2019 Vladimir Makarov <vmakarov.gcc@gmail.com>.
 	**
@@ -12,6 +11,7 @@ namespace beef_hash
 	** To get machine-independent hash, use mir_hash_strict which is about
 	** 1.5 times slower than mir_hash.
 	*/
+	// https://github.com/rurban/smhasher/blob/master/mir-hash.h
 	abstract class MirHash
 	{
 /*

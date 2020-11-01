@@ -16,12 +16,12 @@ namespace beef_hash
 	** 1. It will not work incrementally.
 	** 2. It will not produce the same results on little-endian and big-endian machines.
 	*/
+	// https://github.com/rurban/smhasher/blob/master/MurmurHash1.cpp
 	abstract class Murmur1
 	{
 		private const uint32 M_VAL = 0xC6A4A793U;
 		private const int R_VAL = 16;
 
-		// https://github.com/rurban/smhasher/blob/master/MurmurHash1.cpp
 		public static uint32 Hash(void* key, int length, uint32 seed = 0)
 		{
 			uint32 len = (uint32)length;

@@ -16,6 +16,7 @@ namespace beef_hash
 	** 1. It will not work incrementally.
 	** 2. It will not produce the same results on little-endian and big-endian machines.
 	*/
+	// https://github.com/rurban/smhasher/blob/master/MurmurHash2.cpp
 	class Murmur2
 	{
 		// 'm' and 'r' are mixing constants generated offline.
@@ -108,7 +109,6 @@ namespace beef_hash
 			}
 		}
 
-		// https://github.com/rurban/smhasher/blob/master/MurmurHash2.cpp
 		public static uint32 Hash(void* key, int length, uint32 seed) {
 			uint32 len = (uint32)length;
 			// Initialize the hash to a 'random' value

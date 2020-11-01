@@ -1,9 +1,10 @@
 namespace beef_hash
 {
-	/* https://github.com/jonmaiga/mx3/blob/master/mx3.h
+	/*
 	** author: Jon Maiga, 2020-08-03, jonkagstrom.com, @jonkagstrom
 	** license: CC0 license
 	*/
+	// https://github.com/jonmaiga/mx3/blob/master/mx3.h
 	abstract class Mx3
 	{
 		private const uint64 C = 0xBEA225F9EB34556DUL;

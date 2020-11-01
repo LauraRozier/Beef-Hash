@@ -11,6 +11,7 @@ namespace beef_hash
 	** run any of them on any platform, but your performance with the non-native version
 	** will be less than optimal.
 	*/
+	// https://github.com/rurban/smhasher/blob/master/MurmurHash3.cpp
 	abstract class Murmur3
 	{
 		private static mixin rotl32(uint32 x, int8 r)
@@ -58,7 +59,6 @@ namespace beef_hash
 			h ^ (h >> 33)
 		}
 		
-		// https://github.com/rurban/smhasher/blob/master/MurmurHash3.cpp
 		public static uint32 Hash_32(void* key, int length, uint32 seed)
 		{
 			const uint32 c1 = 0xCC9E2D51U;
