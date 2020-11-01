@@ -283,7 +283,9 @@ namespace beef_hash
 
 		// farmhash na
 		[Inline]
-		private static uint64 farmhash_na_len_0_to_16(char8*s, uint len) {
+		private static uint64 farmhash_na_len_0_to_16(char8* s, int length) {
+			uint32 len = (uint32)length;
+
 			if (len >= 8) {
 				uint64 mul = k2 + len * 2;
 				uint64 a = fetch64!(s) + k2;
@@ -311,10 +313,10 @@ namespace beef_hash
 			return k2;
 		}
 
-		// This probably works well for 16-byte strings as well, but it may be overkill
-		// in that case.
+		// This probably works well for 16-byte strings as well, but it may be overkill in that case.
 		[Inline]
-		private static uint64 farmhash_na_len_17_to_32(char8* s, uint len) {
+		private static uint64 farmhash_na_len_17_to_32(char8* s, int length) {
+			uint32 len = (uint32)length;
 			uint64 mul = k2 + len * 2;
 			uint64 a = fetch64!(s) * k1;
 			uint64 b = fetch64!(s + 8);
@@ -323,8 +325,9 @@ namespace beef_hash
 			return farmhash_len_16_mul!(ror64!(a + b, 43) + ror64!(c, 30) + d, a + ror64!(b + k2, 18) + c, mul);
 		}
 		
-		// Return a 16-byte hash for 48 bytes.  Quick and dirty.
-		// Callers do best to use "random-looking" values for a and b.
+		/* Return a 16-byte hash for 48 bytes.  Quick and dirty.
+		** Callers do best to use "random-looking" values for a and b.
+		*/
 		[Inline]
 		private static uint128_c_t weak_farmhash_na_len_32_with_seeds_vals(uint64 w, uint64 x, uint64 y, uint64 z, uint64 a, uint64 b) {
 			uint64 al = a, bl = b;
@@ -344,7 +347,8 @@ namespace beef_hash
 		
 		// Return an 8-byte hash for 33 to 64 bytes.
 		[Inline]
-		private static uint64 farmhash_na_len_33_to_64(char8* s, uint len) {
+		private static uint64 farmhash_na_len_33_to_64(char8* s, int length) {
+			uint32 len = (uint32)length;
 			uint64 mul = k2 + len * 2;
 			uint64 a = fetch64!(s) * k2;
 			uint64 b = fetch64!(s + 8);
@@ -359,29 +363,27 @@ namespace beef_hash
 			return farmhash_len_16_mul!(ror64!(e + f, 43) + ror64!(g, 30) + h, e + ror64!(f + a, 18) + g, mul);
 		}
 
-		private static uint64 farmhash64_na(char8* str, uint len) {
+		private static uint64 farmhash64_na(char8* str, int length) {
 			const uint64 seed = 81;
+			uint32 len = (uint32)length;
 			char8* s = str;
 
 			if (len <= 32) {
-				if (len <= 16) {
-					return farmhash_na_len_0_to_16(s, len);
-				} else {
-					return farmhash_na_len_17_to_32(s, len);
-				}
+				return len <= 16 ? farmhash_na_len_0_to_16(s, length) : farmhash_na_len_17_to_32(s, length);
 			} else if (len <= 64) {
-				return farmhash_na_len_33_to_64(s, len);
+				return farmhash_na_len_33_to_64(s, length);
 			}
 			
 			// For strings over 64 bytes we loop.  Internal state consists of 56 bytes: v, w, x, y, and z.
 			uint64 x = seed;
 
-			// seed =                   81 (0x              51)
-			// k1 =   13011662864482103923 (0xb492b66fbe98f273)
-			//                         113 (0x              71)
-			//         2480279821605975764 (0x226BB95B4E64B6D4) according to http://calc.penjee.com/?s=EAaLDIBLFFPLOIHPBGCcGAk
-			//         2480279821605975926 (0x226BB95B4E64B776) according to Ms Calc <- lol
-			//         2480279821605975764 (0x226BB95B4E64B6D4) according to C++ (https://onlinegdb.com/ByWeS5odD)
+			/* seed =                   81 (0x              51)
+			** k1 =   13011662864482103923 (0xb492b66fbe98f273)
+			**                         113 (0x              71)
+			**         2480279821605975764 (0x226BB95B4E64B6D4) according to http://calc.penjee.com/?s=EAaLDIBLFFPLOIHPBGCcGAk
+			**         2480279821605975926 (0x226BB95B4E64B776) according to Ms Calc <- lol
+			**         2480279821605975764 (0x226BB95B4E64B6D4) according to C++ (https://onlinegdb.com/ByWeS5odD)
+			*/
 			//uint64 y = seed * k1 + 113; // Result out of range for type 'uint64'
 #if BF_LITTLE_ENDIAN
 			//uint64 y = 0x51 * 0xb492b66fbe98f273UL + 0x71;
@@ -431,12 +433,12 @@ namespace beef_hash
 		}
 
 		[Inline]
-		private static uint64 farmhash64_na_with_seeds(char8* s, uint len, uint64 seed0, uint64 seed1) {
+		private static uint64 farmhash64_na_with_seeds(char8* s, int len, uint64 seed0, uint64 seed1) {
 			return farmhash_len_16!(farmhash64_na(s, len) - seed0, seed1);
 		}
 
 		[Inline]
-		private static uint64 farmhash64_na_with_seed(char8* s, uint len, uint64 seed) {
+		private static uint64 farmhash64_na_with_seed(char8* s, int len, uint64 seed) {
 			return farmhash64_na_with_seeds(s, len, k2, seed);
 		}
 
@@ -449,16 +451,15 @@ namespace beef_hash
 			return ror64!(b, (uint)r) * mul;
 		}
 		
-		private static uint64 farmhash64_uo_with_seeds(char8* str, uint length, uint64 seed0, uint64 seed1) {
+		private static uint64 farmhash64_uo_with_seeds(char8* str, int length, uint64 seed0, uint64 seed1) {
 			char8* s = str;
-			uint len = length;
+			uint32 len = (uint32)length;
 
 			if (len <= 64) {
-				return farmhash64_na_with_seeds(s, len, seed0, seed1);
+				return farmhash64_na_with_seeds(s, length, seed0, seed1);
 			}
 
-			// For strings over 64 bytes we loop.  Internal state consists of
-			// 64 bytes: u, v, w, x, y, and z.
+			// For strings over 64 bytes we loop.  Internal state consists of 64 bytes: u, v, w, x, y, and z.
 			uint64 x = seed0;
 			uint64 y = seed1 * k2 + 113;
 			uint64 z = smix(y * k2) * k2;
@@ -542,18 +543,19 @@ namespace beef_hash
 		}
 
 		[Inline]
-		private static uint64 farmhash64_uo_with_seed(char8* s, uint len, uint64 seed) {
+		private static uint64 farmhash64_uo_with_seed(char8* s, int len, uint64 seed) {
 			return len <= 64 ? farmhash64_na_with_seed(s, len, seed) : farmhash64_uo_with_seeds(s, len, 0, seed);
 		}
 		
 		[Inline]
-		private static uint64 farmhash64_uo(char8* s, uint len) {
+		private static uint64 farmhash64_uo(char8* s, int len) {
 			return len <= 64 ? farmhash64_na(s, len) : farmhash64_uo_with_seeds(s, len, 81, 0);
 		}
 
 		// farmhash xo
 		[Inline]
-		private static uint64 farmhash_xo_h32(char8* s, uint len, uint64 mul, uint64 seed0, uint64 seed1) {
+		private static uint64 farmhash_xo_h32(char8* s, int length, uint64 mul, uint64 seed0, uint64 seed1) {
+			uint32 len = (uint32)length;
 			uint64 a = fetch64!(s) * k1;
 			uint64 b = fetch64!(s + 8);
 			uint64 c = fetch64!(s + len - 8) * mul;
@@ -566,7 +568,8 @@ namespace beef_hash
 
 		// Return an 8-byte hash for 33 to 64 bytes.
 		[Inline]
-		private static uint64 farmhash_xo_len_33_to_64(char8* s, uint len) {
+		private static uint64 farmhash_xo_len_33_to_64(char8* s, int length) {
+			uint32 len = (uint32)length;
 			uint64 mul0 = k2 - 30;
 			uint64 mul1 = k2 - 30 + 2 * len;
 			uint64 h0 = farmhash_xo_h32(s, 32, mul0, 0, 0);
@@ -576,7 +579,8 @@ namespace beef_hash
 
 		// Return an 8-byte hash for 65 to 96 bytes.
 		[Inline]
-		private static uint64 farmhash_xo_len_65_to_96(char8* s, uint len) {
+		private static uint64 farmhash_xo_len_65_to_96(char8* s, int length) {
+			uint32 len = (uint32)length;
 			uint64 mul0 = k2 - 114;
 			uint64 mul1 = k2 - 114 + 2 * len;
 			uint64 h0 = farmhash_xo_h32(s, 32, mul0, 0, 0);
@@ -585,7 +589,7 @@ namespace beef_hash
 			return (h2 * 9 + (h0 >> 17) + (h1 >> 21)) * mul1;
 		}
 
-		private static uint64 farmhash64_xo(char8* s, uint len) {
+		private static uint64 farmhash64_xo(char8* s, int len) {
 			if (len <= 32) {
 				if (len <= 16) {
 					return farmhash_na_len_0_to_16(s, len);
@@ -604,19 +608,20 @@ namespace beef_hash
 		}
 
 		[Inline]
-		private static uint64 farmhash64_xo_with_seeds(char8* s, uint len, uint64 seed0, uint64 seed1) {
+		private static uint64 farmhash64_xo_with_seeds(char8* s, int len, uint64 seed0, uint64 seed1) {
 			return farmhash64_uo_with_seeds(s, len, seed0, seed1);
 		}
 
 		[Inline]
-		private static uint64 farmhash64_xo_with_seed(char8* s, uint len, uint64 seed) {
+		private static uint64 farmhash64_xo_with_seed(char8* s, int len, uint64 seed) {
 			return farmhash64_uo_with_seed(s, len, seed);
 		}
 
 		// farmhash te
-#if x86_64 && CAN_USE_SSE41 && CAN_USE_SSSE3
-		// Requires n >= 256.  Requires SSE4.1. Should be slightly faster if the
-		// compiler uses AVX instructions (e.g., use the -mavx flag with GCC).
+#if BF_64_BIT && CAN_USE_SSE41 && CAN_USE_SSSE3
+		/* Requires n >= 256.  Requires SSE4.1. Should be slightly faster if the
+		** compiler uses AVX instructions (e.g., use the -mavx flag with GCC).
+		*/
 		[Inline]
 		private static uint64 farmhash64_te_long(char8* str, uint n, uint64 seed0, uint64 seed1) {
 			char8* s = str;
@@ -797,39 +802,39 @@ namespace beef_hash
 		}
 
 		[Inline]
-		private static uint64 farmhash64_te(char8* s, uint len) {
+		private static uint64 farmhash64_te(char8* s, int len) {
 			// Empirically, farmhash xo seems faster until length 512.
 			return len >= 512 ? farmhash64_te_long(s, len, k2, k1) : farmhash64_xo(s, len);
 		}
 		
 		[Inline]
-		private static uint64 farmhash64_te_with_seed(char8* s, uint len, uint64 seed) {
+		private static uint64 farmhash64_te_with_seed(char8* s, int len, uint64 seed) {
 			return len >= 512 ? farmhash64_te_long(s, len, k1, seed) : farmhash64_xo_with_seed(s, len, seed);
 		}
 		
 		[Inline]
-		private static uint64 farmhash64_te_with_seeds(char8* s, uint len, uint64 seed0, uint64 seed1) {
+		private static uint64 farmhash64_te_with_seeds(char8* s, int len, uint64 seed0, uint64 seed1) {
 			return len >= 512 ? farmhash64_te_long(s, len, seed0, seed1) : farmhash64_xo_with_seeds(s, len, seed0, seed1);
 		}
 
 #endif
 
 		// farmhash nt
-#if x86_64 && CAN_USE_SSE41 && CAN_USE_SSSE3
+#if BF_64_BIT && CAN_USE_SSE41 && CAN_USE_SSSE3
 		[Inline]
-		private static uint32 farmhash32_nt(char8* s, uint len) {
+		private static uint32 farmhash32_nt(char8* s, int len) {
 			return (uint32)farmhash64_te(s, len);
 		}
 		
 		[Inline]
-		private static uint32 farmhash32_nt_with_seed(char8* s, uint len, uint32 seed) {
+		private static uint32 farmhash32_nt_with_seed(char8* s, int len, uint32 seed) {
 			return (uint32)farmhash64_te_with_seed(s, len, seed);
 		}
 #endif
 
 		// farmhash mk
 		[Inline]
-		private static uint32 farmhash32_mk_len_13_to_24(char8* s, uint length, uint32 seed) {
+		private static uint32 farmhash32_mk_len_13_to_24(char8* s, int length, uint32 seed) {
 			uint32 len = (uint32)length;
 			uint32 a = fetch32!(s - 4 + (len >> 1));
 			uint32 b = fetch32!(s + 4);
@@ -848,7 +853,7 @@ namespace beef_hash
 		}
 		
 		[Inline]
-		private static uint32 farmhash32_mk_len_0_to_4(char8* s, uint length, uint32 seed) {
+		private static uint32 farmhash32_mk_len_0_to_4(char8* s, int length, uint32 seed) {
 			uint32 len = (uint32)length;
 			uint32 b = seed;
 			uint32 c = 9;
@@ -864,7 +869,7 @@ namespace beef_hash
 		}
 		
 		[Inline]
-		private static uint32 farmhash32_mk_len_5_to_12(char8* s, uint len, uint32 seed) {
+		private static uint32 farmhash32_mk_len_5_to_12(char8* s, int len, uint32 seed) {
 			uint32 a = (uint32)len, b = (uint32)len * 5, c = 9, d = b + seed;
 			a += fetch32!(s);
 			b += fetch32!(s + len - 4);
@@ -872,14 +877,14 @@ namespace beef_hash
 			return fmix(seed ^ mur(c, mur(b, mur(a, d))));
 		}
 		
-		private static uint32 farmhash32_mk(char8* str, uint length) {
+		private static uint32 farmhash32_mk(char8* str, int length) {
 			char8* s = str;
 			uint32 len = (uint32)length;
 
 			if (len <= 24) {
 				return len <= 12
-					? (len <= 4 ? farmhash32_mk_len_0_to_4(s, len, 0) : farmhash32_mk_len_5_to_12(s, len, 0))
-					: farmhash32_mk_len_13_to_24(s, len, 0);
+					? (len <= 4 ? farmhash32_mk_len_0_to_4(s, length, 0) : farmhash32_mk_len_5_to_12(s, length, 0))
+					: farmhash32_mk_len_13_to_24(s, length, 0);
 			}
 		
 			// len > 24
@@ -935,7 +940,7 @@ namespace beef_hash
 		}
 		
 		[Inline]
-		private static uint32 farmhash32_mk_with_seed(char8* s, uint len, uint32 seed) {
+		private static uint32 farmhash32_mk_with_seed(char8* s, int len, uint32 seed) {
 			if (len <= 24) {
 				if (len >= 13)
 					return farmhash32_mk_len_13_to_24(s, len, seed * c1);
@@ -951,7 +956,7 @@ namespace beef_hash
 
 		// farmhash su
 #if CAN_USE_AESNI && CAN_USE_SSE42
-		private static uint32 farmhash32_su(char8* str, uint length) {
+		private static uint32 farmhash32_su(char8* str, int length) {
 			const uint32 seed = 81;
 			char8* s = str;
 			uint32 len = (uint32)length;
@@ -1099,7 +1104,7 @@ namespace beef_hash
 		}
 
 		[Inline]
-		public static uint32 farmhash32_su_with_seed(char8* s, uint len, uint32 seed) {
+		public static uint32 farmhash32_su_with_seed(char8* s, int len, uint32 seed) {
 			if (len <= 24) {
 				if (len >= 13)
 					return farmhash32_mk_len_13_to_24(s, len, seed * c1);
@@ -1115,7 +1120,7 @@ namespace beef_hash
 
 		// farmhash sa
 #if CAN_USE_SSE41 && CAN_USE_SSE42
-		private static uint32 farmhash32_sa(char8* str, uint length) {
+		private static uint32 farmhash32_sa(char8* str, int length) {
 			const uint32 seed = 81;
 			char8* s = str;
 			uint32 len = (uint32)length;
@@ -1253,7 +1258,7 @@ namespace beef_hash
 		}
 
 		[Inline]
-		private static uint32 farmhash32_sa_with_seed(char8* s, uint len, uint32 seed) {
+		private static uint32 farmhash32_sa_with_seed(char8* s, int len, uint32 seed) {
 			if (len <= 24) {
 				if (len >= 13)
 					return farmhash32_mk_len_13_to_24(s, len, seed * c1);
@@ -1269,26 +1274,25 @@ namespace beef_hash
 #endif
 
 		// farmhash cc
-		
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-		// This file provides a 32-bit hash equivalent to cityhash32 (v1.1.1)
-		// and a 128-bit hash equivalent to cityhash128 (v1.1.1).  It also provides
-		// a seeded 32-bit hash function similar to cityhash32.
+		/* This file provides a 32-bit hash equivalent to cityhash32 (v1.1.1)
+		** and a 128-bit hash equivalent to cityhash128 (v1.1.1).  It also provides
+		** a seeded 32-bit hash function similar to cityhash32.
+		*/
 		[Inline]
-		private static uint32 farmhash32_cc_len_13_to_24(char8* s, uint len) {
-			uint32 a = fetch32(s - 4 + (len >> 1));
-			uint32 b = fetch32(s + 4);
-			uint32 c = fetch32(s + len - 8);
-			uint32 d = fetch32(s + (len >> 1));
-			uint32 e = fetch32(s);
-			uint32 f = fetch32(s + len - 4);
+		private static uint32 farmhash32_cc_len_13_to_24(char8* s, int length) {
+			uint32 len = (uint32)length;
+			uint32 a = fetch32!(s - 4 + (len >> 1));
+			uint32 b = fetch32!(s + 4);
+			uint32 c = fetch32!(s + len - 8);
+			uint32 d = fetch32!(s + (len >> 1));
+			uint32 e = fetch32!(s);
+			uint32 f = fetch32!(s + len - 4);
 			uint32 h = len;
 			return fmix(mur(f, mur(e, mur(d, mur(c, mur(b, mur(a, h)))))));
 		}
 
 		[Inline]
-		private static uint32 farmhash32_cc_len_0_to_4(char8* s, uint length) {
+		private static uint32 farmhash32_cc_len_0_to_4(char8* s, int length) {
 			uint32 len = (uint32)length;
 			uint32 b = 0;
 			uint32 c = 9;
@@ -1302,7 +1306,7 @@ namespace beef_hash
 		}
 
 		[Inline]
-		private static uint32 farmhash32_cc_len_5_to_12(char8* s, uint length) {
+		private static uint32 farmhash32_cc_len_5_to_12(char8* s, int length) {
 			uint32 len = (uint32)length;
 			uint32 a = len, b = len * 5, c = 9, d = b;
 			a += fetch32!(s);
@@ -1311,82 +1315,81 @@ namespace beef_hash
 			return fmix(mur(c, mur(b, mur(a, d))));
 		}
 		
-		private static uint32 farmhash32_cc(char8* str, uint length) {
+		private static uint32 farmhash32_cc(char8* str, int length) {
 			uint32 len = (uint32)length;
 			char8* s = str;
 
 			if (len <= 24) {
 				return len <= 12
-					? (len <= 4 ? farmhash32_cc_len_0_to_4(s, len) : farmhash32_cc_len_5_to_12(s, len))
-					: farmhash32_cc_len_13_to_24(s, len);
+					? (len <= 4 ? farmhash32_cc_len_0_to_4(s, length) : farmhash32_cc_len_5_to_12(s, length))
+					: farmhash32_cc_len_13_to_24(s, length);
 			}
 			
 			// len > 24
 			uint32 h = len, g = c1 * len, f = g;
-			uint32 a0 = ror32(fetch32(s + len - 4) * c1, 17) * c2;
-			uint32 a1 = ror32(fetch32(s + len - 8) * c1, 17) * c2;
-			uint32 a2 = ror32(fetch32(s + len - 16) * c1, 17) * c2;
-			uint32 a3 = ror32(fetch32(s + len - 12) * c1, 17) * c2;
-			uint32 a4 = ror32(fetch32(s + len - 20) * c1, 17) * c2;
+			uint32 a0 = ror32!(fetch32!(s + len - 4) * c1, 17) * c2;
+			uint32 a1 = ror32!(fetch32!(s + len - 8) * c1, 17) * c2;
+			uint32 a2 = ror32!(fetch32!(s + len - 16) * c1, 17) * c2;
+			uint32 a3 = ror32!(fetch32!(s + len - 12) * c1, 17) * c2;
+			uint32 a4 = ror32!(fetch32!(s + len - 20) * c1, 17) * c2;
 			h ^= a0;
-			h = ror32(h, 19);
-			h = h * 5 + 0xe6546b64;
+			h = ror32!(h, 19);
+			h = h * 5 + 0xE6546B64;
 			h ^= a2;
-			h = ror32(h, 19);
-			h = h * 5 + 0xe6546b64;
+			h = ror32!(h, 19);
+			h = h * 5 + 0xE6546B64;
 			g ^= a1;
-			g = ror32(g, 19);
-			g = g * 5 + 0xe6546b64;
+			g = ror32!(g, 19);
+			g = g * 5 + 0xE6546B64;
 			g ^= a3;
-			g = ror32(g, 19);
-			g = g * 5 + 0xe6546b64;
+			g = ror32!(g, 19);
+			g = g * 5 + 0xE6546B64;
 			f += a4;
-			f = ror32(f, 19);
-			f = f * 5 + 0xe6546b64;
+			f = ror32!(f, 19);
+			f = f * 5 + 0xE6546B64;
 			uint iters = (len - 1) / 20;
 
 			repeat {
-				uint32 a0 = ror32(fetch32(s) * c1, 17) * c2;
-				uint32 a1 = fetch32(s + 4);
-				uint32 a2 = ror32(fetch32(s + 8) * c1, 17) * c2;
-				uint32 a3 = ror32(fetch32(s + 12) * c1, 17) * c2;
-				uint32 a4 = fetch32(s + 16);
+				a0 = ror32!(fetch32!(s) * c1, 17) * c2;
+				a1 = fetch32!(s + 4);
+				a2 = ror32!(fetch32!(s + 8) * c1, 17) * c2;
+				a3 = ror32!(fetch32!(s + 12) * c1, 17) * c2;
+				a4 = fetch32!(s + 16);
 				h ^= a0;
-				h = ror32(h, 18);
-				h = h * 5 + 0xe6546b64;
+				h = ror32!(h, 18);
+				h = h * 5 + 0xE6546B64;
 				f += a1;
-				f = ror32(f, 19);
+				f = ror32!(f, 19);
 				f = f * c1;
 				g += a2;
-				g = ror32(g, 18);
-				g = g * 5 + 0xe6546b64;
+				g = ror32!(g, 18);
+				g = g * 5 + 0xE6546B64;
 				h ^= a3 + a1;
-				h = ror32(h, 19);
-				h = h * 5 + 0xe6546b64;
+				h = ror32!(h, 19);
+				h = h * 5 + 0xE6546B64;
 				g ^= a4;
 				g = bswap32(g) * 5;
 				h += a4 * 5;
 				h = bswap32(h);
 				f += a0;
-				PERMUTE3(&f, &h, &g);
+				PERMUTE3!(&f, &h, &g);
 				s += 20;
 			} while (--iters != 0);
 
-			g = ror32(g, 11) * c1;
-			g = ror32(g, 17) * c1;
-			f = ror32(f, 11) * c1;
-			f = ror32(f, 17) * c1;
-			h = ror32(h + g, 19);
-			h = h * 5 + 0xe6546b64;
-			h = ror32(h, 17) * c1;
-			h = ror32(h + f, 19);
-			h = h * 5 + 0xe6546b64;
-			return ror32(h, 17) * c1;
+			g = ror32!(g, 11) * c1;
+			g = ror32!(g, 17) * c1;
+			f = ror32!(f, 11) * c1;
+			f = ror32!(f, 17) * c1;
+			h = ror32!(h + g, 19);
+			h = h * 5 + 0xE6546B64;
+			h = ror32!(h, 17) * c1;
+			h = ror32!(h + f, 19);
+			h = h * 5 + 0xE6546B64;
+			return ror32!(h, 17) * c1;
 		}
 
 		[Inline]
-		private static uint32 farmhash32_cc_with_seed(char8* str, uint length, uint32 seed) {
-			uint32 len = (uint32)length;
+		private static uint32 farmhash32_cc_with_seed(char8* str, int len, uint32 seed) {
 			char8* s = str;
 		
 			if (len <= 24) {
@@ -1398,25 +1401,27 @@ namespace beef_hash
 					return farmhash32_mk_len_0_to_4(s, len, seed);
 			}
 		
-			uint32 h = farmhash32_mk_len_13_to_24(s, 24, seed ^ len);
+			uint32 h = farmhash32_mk_len_13_to_24(s, 24, seed ^ (uint32)len);
 			return mur(farmhash32_cc(s + 24, len - 24) + seed, h);
 		}
 		
 		[Inline]
-		private static uint64 farmhash_cc_len_0_to_16(char8* s, uint len) {
+		private static uint64 farmhash_cc_len_0_to_16(char8* s, int length) {
+			uint32 len = (uint32)length;
+
 			if (len >= 8) {
 				uint64 mul = k2 + len * 2;
-				uint64 a = fetch64(s) + k2;
-				uint64 b = fetch64(s + len - 8);
-				uint64 c = ror64(b, 37) * mul + a;
-				uint64 d = (ror64(a, 25) + b) * mul;
-				return farmhash_len_16_mul(c, d, mul);
+				uint64 a = fetch64!(s) + k2;
+				uint64 b = fetch64!(s + len - 8);
+				uint64 c = ror64!(b, 37) * mul + a;
+				uint64 d = (ror64!(a, 25) + b) * mul;
+				return farmhash_len_16_mul!(c, d, mul);
 			}
 
 			if (len >= 4) {
 				uint64 mul = k2 + len * 2;
-				uint64 a = fetch32(s);
-				return farmhash_len_16_mul(len + (a << 3), fetch32(s + len - 4), mul);
+				uint64 a = fetch32!(s);
+				return farmhash_len_16_mul!(len + (a << 3), fetch32!(s + len - 4), mul);
 			}
 
 			if (len > 0) {
@@ -1435,45 +1440,48 @@ namespace beef_hash
 		// Callers do best to use "random-looking" values for a and b.
 		[Inline]
 		private static uint128_c_t weak_farmhash_cc_len_32_with_seeds_vals(uint64 w, uint64 x, uint64 y, uint64 z, uint64 a, uint64 b) {
-			a += w;
-			b = ror64(b + a + z, 21);
-			uint64 c = a;
-			a += x;
-			a += y;
-			b += ror64(a, 44);
-			return make_uint128_c_t(a + z, b + c);
+			uint64 al = a, bl = b;
+			al += w;
+			bl = ror64!(bl + al + z, 21);
+			uint64 c = al;
+			al += x;
+			al += y;
+			bl += ror64!(al, 44);
+			return make_uint128_c_t!(al + z, bl + c);
 		}
 
 		// Return a 16-byte hash for s[0] ... s[31], a, and b.  Quick and dirty.
 		[Inline]
 		private static uint128_c_t weak_farmhash_cc_len_32_with_seeds(char8* s, uint64 a, uint64 b) {
-			return weak_farmhash_cc_len_32_with_seeds_vals(fetch64(s), fetch64(s + 8), fetch64(s + 16), fetch64(s + 24), a, b);
+			return weak_farmhash_cc_len_32_with_seeds_vals(fetch64!(s), fetch64!(s + 8), fetch64!(s + 16), fetch64!(s + 24), a, b);
 		}
 
 		// A subroutine for cityhash128().  Returns a decent 128-bit hash for strings
 		// of any length representable in signed long.  Based on City and Murmur.
 		[Inline]
-		private static static uint128_c_t farmhash_cc_city_murmur(char8* s, uint len, uint128_c_t seed) {
-			uint64 a = uint128_c_t_low64(seed);
-			uint64 b = uint128_c_t_high64(seed);
+		private static uint128_c_t farmhash_cc_city_murmur(char8* str, int length, uint128_c_t seed) {
+			uint32 len = (uint32)length;
+			char8* s = str;
+			uint64 a = uint128_c_t_low64!(seed);
+			uint64 b = uint128_c_t_high64!(seed);
 			uint64 c = 0;
 			uint64 d = 0;
 			uint32 l = len - 16;
 
 			if (l <= 0) {  // len <= 16
 				a = smix(a * k1) * k1;
-				c = b * k1 + farmhash_cc_len_0_to_16(s, len);
-				d = smix(a + (len >= 8 ? fetch64(s) : c));
+				c = b * k1 + farmhash_cc_len_0_to_16(s, length);
+				d = smix(a + (len >= 8 ? fetch64!(s) : c));
 			} else {  // len > 16
-				c = farmhash_len_16(fetch64(s + len - 8) + k1, a);
-				d = farmhash_len_16(b + len, c + fetch64(s + len - 16));
+				c = farmhash_len_16!(fetch64!(s + len - 8) + k1, a);
+				d = farmhash_len_16!(b + len, c + fetch64!(s + len - 16));
 				a += d;
 
 				repeat {
-					a ^= smix(fetch64(s) * k1) * k1;
+					a ^= smix(fetch64!(s) * k1) * k1;
 					a *= k1;
 					b ^= a;
-					c ^= smix(fetch64(s + 8) * k1) * k1;
+					c ^= smix(fetch64!(s + 8) * k1) * k1;
 					c *= k1;
 					d ^= c;
 					s += 16;
@@ -1481,65 +1489,68 @@ namespace beef_hash
 				} while (l > 0);
 			}
 
-			a = farmhash_len_16(a, c);
-			b = farmhash_len_16(d, b);
-			return make_uint128_c_t(a ^ b, farmhash_len_16(b, a));
+			a = farmhash_len_16!(a, c);
+			b = farmhash_len_16!(d, b);
+			return make_uint128_c_t!(a ^ b, farmhash_len_16!(b, a));
 		}
 			
-		private static uint128_c_t farmhash128_cc_city_with_seed(char8* s, uint len, uint128_c_t seed) {
+		private static uint128_c_t farmhash128_cc_city_with_seed(char8* str, int length, uint128_c_t seed) {
+			uint32 len = (uint32)length;
+			char8* s = str;
+
 			if (len < 128) {
-				return farmhash_cc_city_murmur(s, len, seed);
+				return farmhash_cc_city_murmur(s, length, seed);
 			}
 
 			// We expect len >= 128 to be the common case.  Keep 56 bytes of state:
 			// v, w, x, y, and z.
 			uint128_c_t v, w;
-			uint64 x = uint128_c_t_low64(seed);
-			uint64 y = uint128_c_t_high64(seed);
+			uint64 x = uint128_c_t_low64!(seed);
+			uint64 y = uint128_c_t_high64!(seed);
 			uint64 z = len * k1;
 			uint tail_done;
 			
-			v.a = ror64(y ^ k1, 49) * k1 + fetch64(s);
-			v.b = ror64(v.a, 42) * k1 + fetch64(s + 8);
-			w.a = ror64(y + z, 35) * k1 + x;
-			w.b = ror64(x + fetch64(s + 88), 53) * k1;
+			v.a = ror64!(y ^ k1, 49) * k1 + fetch64!(s);
+			v.b = ror64!(v.a, 42) * k1 + fetch64!(s + 8);
+			w.a = ror64!(y + z, 35) * k1 + x;
+			w.b = ror64!(x + fetch64!(s + 88), 53) * k1;
 			
 			// This is the same inner loop as cityhash64(), manually unrolled.
 			repeat {
-				x = ror64(x + y + v.a + fetch64(s + 8), 37) * k1;
-				y = ror64(y + v.b + fetch64(s + 48), 42) * k1;
+				x = ror64!(x + y + v.a + fetch64!(s + 8), 37) * k1;
+				y = ror64!(y + v.b + fetch64!(s + 48), 42) * k1;
 				x ^= w.b;
-				y += v.a + fetch64(s + 40);
-				z = ror64(z + w.a, 33) * k1;
+				y += v.a + fetch64!(s + 40);
+				z = ror64!(z + w.a, 33) * k1;
 				v = weak_farmhash_cc_len_32_with_seeds(s, v.b * k1, x + w.a);
-				w = weak_farmhash_cc_len_32_with_seeds(s + 32, z + w.b, y + fetch64(s + 16));
-				swap64(&z, &x);
+				w = weak_farmhash_cc_len_32_with_seeds(s + 32, z + w.b, y + fetch64!(s + 16));
+				swap64!(&z, &x);
 				s += 64;
-				x = ror64(x + y + v.a + fetch64(s + 8), 37) * k1;
-				y = ror64(y + v.b + fetch64(s + 48), 42) * k1;
+				x = ror64!(x + y + v.a + fetch64!(s + 8), 37) * k1;
+				y = ror64!(y + v.b + fetch64!(s + 48), 42) * k1;
 				x ^= w.b;
-				y += v.a + fetch64(s + 40);
-				z = ror64(z + w.a, 33) * k1;
+				y += v.a + fetch64!(s + 40);
+				z = ror64!(z + w.a, 33) * k1;
 				v = weak_farmhash_cc_len_32_with_seeds(s, v.b * k1, x + w.a);
-				w = weak_farmhash_cc_len_32_with_seeds(s + 32, z + w.b, y + fetch64(s + 16));
-				swap64(&z, &x);
+				w = weak_farmhash_cc_len_32_with_seeds(s + 32, z + w.b, y + fetch64!(s + 16));
+				swap64!(&z, &x);
 				s += 64;
 				len -= 128;
-			} while (likely(len >= 128));
+			} while (len >= 128);
 
-			x += ror64(v.a + z, 49) * k0;
-			y = y * k0 + ror64(w.b, 37);
-			z = z * k0 + ror64(w.a, 27);
+			x += ror64!(v.a + z, 49) * k0;
+			y = y * k0 + ror64!(w.b, 37);
+			z = z * k0 + ror64!(w.a, 27);
 			w.a *= 9;
 			v.a *= k0;
 
 			// If 0 < len < 128, hash up to 4 chunks of 32 bytes each from the end of s.
 			for (tail_done = 0; tail_done < len; ) {
 				tail_done += 32;
-				y = ror64(x + y, 42) * k0 + v.b;
-				w.a += fetch64(s + len - tail_done + 16);
+				y = ror64!(x + y, 42) * k0 + v.b;
+				w.a += fetch64!(s + len - tail_done + 16);
 				x = x * k0 + w.a;
-				z += w.b + fetch64(s + len - tail_done);
+				z += w.b + fetch64!(s + len - tail_done);
 				w.b += v.a;
 				v = weak_farmhash_cc_len_32_with_seeds(s + len - tail_done, v.a + z, v.b);
 				v.a *= k0;
@@ -1548,12 +1559,10 @@ namespace beef_hash
 			// At this point our 56 bytes of state should contain more than
 			// enough information for a strong 128-bit hash.  We use two
 			// different 56-byte-to-8-byte hashes to get a 16-byte final result.
-			x = farmhash_len_16(x, v.a);
-			y = farmhash_len_16(y + z, w.a);
-			return make_uint128_c_t(farmhash_len_16(x + v.b, w.b) + y, farmhash_len_16(x + w.b, y + v.b));
+			x = farmhash_len_16!(x, v.a);
+			y = farmhash_len_16!(y + z, w.a);
+			return make_uint128_c_t!(farmhash_len_16!(x + v.b, w.b) + y, farmhash_len_16!(x + w.b, y + v.b));
 		}
-
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 		// BASIC STRING HASHING
 		
@@ -1561,9 +1570,13 @@ namespace beef_hash
 		// May change from time to time, may differ on different platforms, may differ
 		// depending on NDEBUG.
 		[Inline]
-		public static uint farmhash(char8* s, uint len)
+		public static uint farmhash(char8* s, int len)
 		{
-			return sizeof(uint) == 8 ? farmhash64(s, len) : farmhash32(s, len);
+#if BF_64_BIT
+			return farmhash64(s, len);
+#else
+			return farmhash32(s, len);
+#endif
 		}
 		
 		// Hash function for a byte array.  Most useful in 32-bit binaries.
@@ -1573,10 +1586,10 @@ namespace beef_hash
 		// SSE4.1 variant, compared to a 32bit or gcc <4.4 result, it is not portable and
 		// not recommended. Disabled in SMHasher
 		[Inline]
-		public static uint32 farmhash32(char8* s, uint len)
+		public static uint32 farmhash32(char8* s, int len)
 		{
 			return debug_tweak32!(
-#if CAN_USE_SSE41 && x86_64
+#if CAN_USE_SSE41 && BF_64_BIT
 				farmhash32_nt(s, len)
 #elif CAN_USE_SSE42 && CAN_USE_AESNI
 				farmhash32_su(s, len)
@@ -1596,10 +1609,10 @@ namespace beef_hash
 		// SSE4.1 variant, compared to a 32bit or gcc <4.4 result, it is not portable and
 		// not recommended. Disabled in SMHasher
 		[Inline]
-		public static uint32 farmhash32_with_seed(char8* s, uint len, uint32 seed)
+		public static uint32 farmhash32_with_seed(char8* s, int len, uint32 seed)
 		{
 			return debug_tweak32!(
-#if CAN_USE_SSE41 && x86_64
+#if CAN_USE_SSE41 && BF_64_BIT
 				farmhash32_nt_with_seed(s, len, seed)
 #elif CAN_USE_SSE42 && CAN_USE_AESNI
 				farmhash32_su_with_seed(s, len, seed)
@@ -1616,10 +1629,10 @@ namespace beef_hash
 		// May change from time to time, may differ on different platforms, may differ
 		// depending on NDEBUG.
 		[Inline]
-		public static uint64 farmhash64(char8* s, uint len)
+		public static uint64 farmhash64(char8* s, int len)
 		{
 			return debug_tweak64!(
-#if CAN_USE_SSE41 && CAN_USE_SSE42 && x86_64
+#if CAN_USE_SSE41 && CAN_USE_SSE42 && BF_64_BIT
 				farmhash64_te(s, len)
 #else
 				farmhash64_xo(s, len)
@@ -1632,7 +1645,7 @@ namespace beef_hash
 		// May change from time to time, may differ on different platforms, may differ
 		// depending on NDEBUG.
 		[Inline]
-		public static uint64 farmhash64_with_seed(char8* s, uint len, uint64 seed)
+		public static uint64 farmhash64_with_seed(char8* s, int len, uint64 seed)
 		{
 			return debug_tweak64!(farmhash64_na_with_seed(s, len, seed));
 		}
@@ -1642,7 +1655,7 @@ namespace beef_hash
 		// May change from time to time, may differ on different platforms, may differ
 		// depending on NDEBUG.
 		[Inline]
-		public static uint64 farmhash64_with_seeds(char8* s, uint len, uint64 seed0, uint64 seed1)
+		public static uint64 farmhash64_with_seeds(char8* s, int len, uint64 seed0, uint64 seed1)
 		{
 			return debug_tweak64!(farmhash64_na_with_seeds(s, len, seed0, seed1));
 		}
@@ -1651,7 +1664,7 @@ namespace beef_hash
 		// May change from time to time, may differ on different platforms, may differ
 		// depending on NDEBUG.
 		[Inline]
-		public static uint128_c_t farmhash128(char8* s, uint len)
+		public static uint128_c_t farmhash128(char8* s, int len)
 		{
 			return debug_tweak128!(farmhash_cc_fingerprint128(s, len));
 		}
@@ -1660,7 +1673,7 @@ namespace beef_hash
 		// May change from time to time, may differ on different platforms, may differ
 		// depending on NDEBUG.
 		[Inline]
-		public static uint128_c_t farmhash128_with_seed(char8* s, uint len, uint128_c_t seed)
+		public static uint128_c_t farmhash128_with_seed(char8* s, int len, uint128_c_t seed)
 		{
 			return debug_tweak128!(farmhash128_cc_city_with_seed(s, len, seed));
 		}
@@ -1684,33 +1697,33 @@ namespace beef_hash
 		
 		// Fingerprint function for a byte array.  Most useful in 32-bit binaries.
 		[Inline]
-		public static uint32 farmhash_fingerprint32(char8* s, uint len)
+		public static uint32 farmhash_fingerprint32(char8* s, int len)
 		{
 			return farmhash32_mk(s, len);
 		}
 		
 		// Fingerprint function for a byte array.
 		[Inline]
-		public static uint64 farmhash_fingerprint64(char8* s, uint len)
+		public static uint64 farmhash_fingerprint64(char8* s, int len)
 		{
 			return farmhash64_na(s, len);
 		}
 
 		[Inline]
-		public static uint128_c_t farmhash128_cc_city(char8* s, uint len) {
+		public static uint128_c_t farmhash128_cc_city(char8* s, int len) {
 			return len >= 16
 				? farmhash128_cc_city_with_seed(s + 16, len - 16, make_uint128_c_t!(fetch64!(s), fetch64!(s + 8) + k0))
 				: farmhash128_cc_city_with_seed(s, len, make_uint128_c_t!(k0, k1));
 		}
 		
 		[Inline]
-		public static uint128_c_t farmhash_cc_fingerprint128(char8* s, uint len) {
+		public static uint128_c_t farmhash_cc_fingerprint128(char8* s, int len) {
 			return farmhash128_cc_city(s, len);
 		}
 		
 		// Fingerprint function for a byte array.
 		[Inline]
-		public static uint128_c_t farmhash_fingerprint128(char8* s, uint len) {
+		public static uint128_c_t farmhash_fingerprint128(char8* s, int len) {
 			return farmhash_cc_fingerprint128(s, len);
 		}
 		
