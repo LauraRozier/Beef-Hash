@@ -29,13 +29,13 @@ namespace beef_hash
 	// https://github.com/rurban/smhasher/blob/master/fasthash.h
 	abstract class FastHash
 	{
-		private const uint64 M_VAL = 0x880355f21e6d1965UL;
+		private const uint64 M_VAL = 0x880355F21E6D1965UL;
 
 		// Compression function for Merkle-Damgard construction.
 		// This function is generated using the framework provided.
 		private static mixin mix(uint64 h) {				
 			h ^= h >> 23;		
-			h *= 0x2127599bf4325c37UL;	
+			h *= 0x2127599BF4325C37UL;	
 			h ^ (h >> 47)
 		}
 

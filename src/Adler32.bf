@@ -8,8 +8,8 @@ namespace beef_hash
 
 		private static mixin Hash(void* data, int len, uint32 adler, ref uint32 h1, ref uint32 h2)
 		{
-			h1 = adler & 0xffff;
-			h2 = (adler >> 16) & 0xffff;
+			h1 = adler & 0xFFFF;
+			h2 = (adler >> 16) & 0xFFFF;
 
 			for (var i = 0; i < len; i++) {
 				h1 += ((uint8*)data)[i];

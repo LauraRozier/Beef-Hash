@@ -14,17 +14,12 @@ namespace beef_hash
 	// https://github.com/rurban/smhasher/blob/master/mir-hash.h
 	abstract class MirHash
 	{
-/*
-#if defined(__x86_64__) || defined(__i386__) || defined(__PPC64__) || defined(__s390__) \
-  || defined(__m32c__) || defined(cris) || defined(__CR16__) || defined(__vax__)        \
-  || defined(__m68k__) || defined(__aarch64__) || defined(_M_AMD64) || defined(_M_IX86)
-*/
+
+#if BF_64_BIT || BF_32_BIT || BF_PPC64 || BF_S390 || BF_M32C || BF_CRIS || BF_CR16 || BF_VAX || BF_M68K || BF_AARCH64 || BF_M_AMD64 || BF_M_IX86
 	#define MIR_HASH_UNALIGNED_ACCESS
-/*
 #else
-	#define MIR_HASH_UNALIGNED_ACCESS
+	#undef MIR_HASH_UNALIGNED_ACCESS
 #endif
-*/
 
 #if BF_LITTLE_ENDIAN
 		private const bool IS_LITTLE_ENDIAN = true;
@@ -56,8 +51,8 @@ namespace beef_hash
 			return tail;
 		}
 
-		private const uint64 p1 = 0X65862b62bdf5ef4dUL;
-		private const uint64 p2 = 0X288eea216831e6a7UL;
+		private const uint64 p1 = 0X65862B62BDF5EF4DUL;
+		private const uint64 p2 = 0X288EEA216831E6A7UL;
 
 		[Inline]
 		public static uint64 mir_mum(uint64 v, uint64 c, int relax_p) {

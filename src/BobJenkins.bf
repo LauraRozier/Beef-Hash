@@ -140,17 +140,17 @@ namespace beef_hash
 				switch (len)
 				{
 				    case 12: c += k[2]; b += k[1]; a += k[0]; break;
-				    case 11: c += k[2] & 0xffffff; b += k[1]; a += k[0]; break;
-				    case 10: c += k[2] & 0xffff; b += k[1]; a += k[0]; break;
-				    case  9: c += k[2] & 0xff; b += k[1]; a += k[0]; break;
+				    case 11: c += k[2] & 0xFFFFFF; b += k[1]; a += k[0]; break;
+				    case 10: c += k[2] & 0xFFFF; b += k[1]; a += k[0]; break;
+				    case  9: c += k[2] & 0xFF; b += k[1]; a += k[0]; break;
 				    case  8: b += k[1]; a += k[0]; break;
-				    case  7: b += k[1] & 0xffffff; a += k[0]; break;
-				    case  6: b += k[1] & 0xffff; a += k[0]; break;
-				    case  5: b += k[1] & 0xff; a += k[0]; break;
+				    case  7: b += k[1] & 0xFFFFFF; a += k[0]; break;
+				    case  6: b += k[1] & 0xFFFF; a += k[0]; break;
+				    case  5: b += k[1] & 0xFF; a += k[0]; break;
 				    case  4: a += k[0]; break;
-				    case  3: a += k[0] & 0xffffff; break;
-				    case  2: a += k[0] & 0xffff; break;
-				    case  1: a += k[0] & 0xff; break;
+				    case  3: a += k[0] & 0xFFFFFF; break;
+				    case  2: a += k[0] & 0xFFFF; break;
+				    case  1: a += k[0] & 0xFF; break;
 				    case  0: return c;              /* zero length strings require no mixing */
 				}
 			} else {
