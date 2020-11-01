@@ -144,7 +144,7 @@ namespace beef_hash
 			return h ^ (h >> 17);
 		}
 
-		public static mixin Hash(StringView val, uint32 seed = 0) { Hash(val.Ptr, val.Length, seed) }
+		public static mixin Hash(StringView val, uint32 seed = 0) { Hash(val.Ptr, val.Length * sizeof(char8), seed) }
 
 		public static mixin Hash(int val, uint32 seed = 0)
 		{
@@ -158,7 +158,7 @@ namespace beef_hash
 			Hash(&tmp, sizeof(uint), seed)
 		}
 
-		public static mixin HashAligned(StringView val, uint32 seed = 0) { HashAligned(val.Ptr, val.Length, seed) }
+		public static mixin HashAligned(StringView val, uint32 seed = 0) { HashAligned(val.Ptr, val.Length * sizeof(char8), seed) }
 
 		public static mixin HashAligned(int val, uint32 seed = 0)
 		{

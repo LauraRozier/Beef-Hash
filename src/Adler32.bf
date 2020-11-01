@@ -32,7 +32,7 @@ namespace beef_hash
 			return (h2 % BASE) + ((h1 % BASE) << 16);
 		}
 
-		public static mixin Hash(StringView val) { Hash(val.Ptr, val.Length) }
+		public static mixin Hash(StringView val) { Hash(val.Ptr, val.Length * sizeof(char8)) }
 
 		public static mixin Hash(int val)
 		{
@@ -46,7 +46,7 @@ namespace beef_hash
 			Hash(&tmp, sizeof(uint))
 		}
 
-		public static mixin HashReverse(StringView str) { HashReverse(str.Ptr, str.Length) }
+		public static mixin HashReverse(StringView str) { HashReverse(str.Ptr, str.Length * sizeof(char8)) }
 
 		public static mixin HashReverse(int val)
 		{

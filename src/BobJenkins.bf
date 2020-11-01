@@ -189,7 +189,7 @@ namespace beef_hash
 			return c;
 		}
 
-		public static mixin Hash(StringView val, uint32 initVal = 0) { HashLittle(val.Ptr, val.Length, initVal) }
+		public static mixin Hash(StringView val, uint32 initVal = 0) { HashLittle(val.Ptr, val.Length * sizeof(char8), initVal) }
 
 		public static mixin Hash(int val, uint32 initVal = 0)
 		{

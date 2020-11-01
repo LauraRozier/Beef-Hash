@@ -217,6 +217,7 @@ namespace beef_hash
 			return (uint8*)&uint32[4](h1, h2, h3, h4);
 		}
 
+		[Inline]
 		public static void Hash_x86_128(void* key, int length, uint32 seed, String outStr)
 		{
 			uint32* tmp = (uint32*)Hash_x86_128(key, length, seed);
@@ -309,6 +310,7 @@ namespace beef_hash
 			return (uint8*)&uint64[2](h1, h2);
 		}
 
+		[Inline]
 		public static void Hash_x64_128(void* key, int length, uint32 seed, String outStr)
 		{
 			uint64* tmp = (uint64*)Hash_x86_128(key, length, seed);
@@ -328,7 +330,7 @@ namespace beef_hash
 #if BF_64_BIT
 			Hash_x64_128(val.Ptr, val.Length, seed, outStr)
 #else
-			Hash_x86_128(val.Ptr, val.Length, seed, outStr)
+			Hash_x86_128(val.Ptr, val.Length * sizeof(char8), seed, outStr)
 #endif
 		}
 
@@ -364,7 +366,7 @@ namespace beef_hash
 #endif
 		}
 
-		public static mixin Hash_32(StringView val, uint32 seed = 0) { Hash_32(val.Ptr, val.Length, seed) }
+		public static mixin Hash_32(StringView val, uint32 seed = 0) { Hash_32(val.Ptr, val.Length * sizeof(char8), seed) }
 
 		public static mixin Hash_32(int val, uint32 seed = 0)
 		{

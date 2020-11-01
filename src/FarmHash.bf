@@ -280,7 +280,7 @@ namespace beef_hash
 			x
 		}
 
-		private static mixin farmhash_len_16(uint64 u, uint64 v) { farmhash128_to_64!(make_uint128_c_t!(u, v)) }
+		private static mixin farmhash_len_16(uint64 u, uint64 v) { Hash128_to_64!(make_uint128_c_t!(u, v)) }
 
 		private static mixin farmhash_len_16_mul(uint64 u, uint64 v, uint64 mul)
 		{
