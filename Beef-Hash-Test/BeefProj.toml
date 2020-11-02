@@ -1,0 +1,7 @@
+FileVersion = 1
+Dependencies = {corlib = "*", Beef-Hash = "*"}
+
+[Project]
+Name = "Beef-Hash-Test"
+StartupObject = "beef_hash_test.Program"
+DefaultNamespace = "beef_hash_test"

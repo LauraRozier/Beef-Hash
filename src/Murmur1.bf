@@ -19,7 +19,7 @@ namespace beef_hash
 	// https://github.com/rurban/smhasher/blob/master/MurmurHash1.cpp
 	abstract class Murmur1
 	{
-		private const uint32 M_VAL = 0xC6A4A793U;
+		private const uint32 M_VAL = 0xC6A4A793;
 		private const int R_VAL = 16;
 
 		public static uint32 Hash(void* key, int length, uint32 seed = 0)
