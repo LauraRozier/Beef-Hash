@@ -55,10 +55,10 @@ namespace beef_hash
 		*/
 		public void Begin(uint32 seed = 0)
 		{
-			m_hash  = seed;
-			m_tail  = 0;
+			m_hash = seed;
+			m_tail = 0;
 			m_count = 0;
-			m_size  = 0;
+			m_size = 0;
 		}
 
 		public void Add(uint8* data, int length)
@@ -135,8 +135,8 @@ namespace beef_hash
 			// Handle the last few bytes of the input array
 			switch(len)
 			{
-				case 3: h ^= ((uint32)data[2]) << 16;
-				case 2: h ^= ((uint32)data[1]) << 8;
+				case 3: h ^= ((uint32)data[2]) << 16; fallthrough;
+				case 2: h ^= ((uint32)data[1]) << 8; fallthrough;
 				case 1: h ^= data[0]; h *= M_VAL;
 			}
 
@@ -180,8 +180,8 @@ namespace beef_hash
 
 			switch(len)
 			{
-				case 3: t ^= ((uint32)data[2]) << 16;
-				case 2: t ^= ((uint32)data[1]) << 8;
+				case 3: t ^= ((uint32)data[2]) << 16; fallthrough;
+				case 2: t ^= ((uint32)data[1]) << 8; fallthrough;
 				case 1: t ^= data[0];
 			}
 
@@ -280,8 +280,8 @@ namespace beef_hash
 
 			switch(len)
 			{
-				case 3: h2 ^= ((uint32)((uint8*)data)[2]) << 16;
-				case 2: h2 ^= ((uint32)((uint8*)data)[1]) << 8;
+				case 3: h2 ^= ((uint32)((uint8*)data)[2]) << 16; fallthrough;
+				case 2: h2 ^= ((uint32)((uint8*)data)[1]) << 8; fallthrough;
 				case 1: h2 ^= ((uint8*)data)[0]; h2 *= M_VAL;
 			}
 
@@ -334,8 +334,8 @@ namespace beef_hash
 
 			switch(len)
 			{
-				case 3: h ^= ((uint32)data[2]) << 16;
-				case 2: h ^= ((uint32)data[1]) << 8;
+				case 3: h ^= ((uint32)data[2]) << 16; fallthrough;
+				case 2: h ^= ((uint32)data[1]) << 8; fallthrough;
 				case 1: h ^= data[0]; h *= M_VAL;
 			}
 
@@ -366,8 +366,8 @@ namespace beef_hash
 
 				switch(align)
 				{
-					case 1: t |= ((uint32)data[2]) << 16;
-					case 2: t |= ((uint32)data[1]) << 8;
+					case 1: t |= ((uint32)data[2]) << 16; fallthrough;
+					case 2: t |= ((uint32)data[1]) << 8; fallthrough;
 					case 3: t |= data[0];
 				}
 
@@ -400,8 +400,8 @@ namespace beef_hash
 				if (len >= align) {
 					switch(align)
 					{
-						case 3: d |= ((uint32)data[2]) << 16;
-						case 2: d |= ((uint32)data[1]) << 8;
+						case 3: d |= ((uint32)data[2]) << 16; fallthrough;
+						case 2: d |= ((uint32)data[1]) << 8; fallthrough;
 						case 1: d |= data[0];
 					}
 
@@ -415,16 +415,16 @@ namespace beef_hash
 					// Handle tail bytes
 					switch(len)
 					{
-						case 3: h ^= ((uint32)data[2]) << 16;
-						case 2: h ^= ((uint32)data[1]) << 8;
+						case 3: h ^= ((uint32)data[2]) << 16; fallthrough;
+						case 2: h ^= ((uint32)data[1]) << 8; fallthrough;
 						case 1: h ^= data[0];
 						h *= M_VAL;
 					}
 				} else {
 					switch(len)
 					{
-						case 3: d |= ((uint32)data[2]) << 16;
-						case 2: d |= ((uint32)data[1]) << 8;
+						case 3: d |= ((uint32)data[2]) << 16; fallthrough;
+						case 2: d |= ((uint32)data[1]) << 8; fallthrough;
 						case 1: d |= data[0];
 						case 0: h ^= (t >> sr) | (d << sl); h *= M_VAL;
 					}
@@ -447,8 +447,8 @@ namespace beef_hash
 				// Handle tail bytes
 				switch(len)
 				{
-					case 3: h ^= ((uint32)data[2]) << 16;
-					case 2: h ^= ((uint32)data[1]) << 8;
+					case 3: h ^= ((uint32)data[2]) << 16; fallthrough;
+					case 2: h ^= ((uint32)data[1]) << 8; fallthrough;
 					case 1: h ^= data[0]; h *= M_VAL;
 				}
 

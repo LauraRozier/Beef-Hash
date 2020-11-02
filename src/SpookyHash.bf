@@ -87,21 +87,21 @@ namespace beef_hash
 
 			switch(remainder)
 			{
-				case 15: d += ((uint64)u.p8[14]) << 48;
-				case 14: d += ((uint64)u.p8[13]) << 40;
-				case 13: d += ((uint64)u.p8[12]) << 32;
-				case 12: d += u.p32[2]; c += u.p64[0]; break;
-				case 11: d += ((uint64)u.p8[10]) << 16;
-				case 10: d += ((uint64)u.p8[9]) << 8;
-				case  9: d += (uint64)u.p8[8];
-				case  8: c += u.p64[0]; break;
-				case  7: c += ((uint64)u.p8[6]) << 48;
-				case  6: c += ((uint64)u.p8[5]) << 40;
-				case  5: c += ((uint64)u.p8[4]) << 32;
-				case  4: c += u.p32[0]; break;
-				case  3: c += ((uint64)u.p8[2]) << 16;
-				case  2: c += ((uint64)u.p8[1]) << 8;
-				case  1: c += (uint64)u.p8[0]; break;
+				case 15: d += ((uint64)u.p8[14]) << 48; fallthrough;
+				case 14: d += ((uint64)u.p8[13]) << 40; fallthrough;
+				case 13: d += ((uint64)u.p8[12]) << 32; fallthrough;
+				case 12: d += u.p32[2]; c += u.p64[0];
+				case 11: d += ((uint64)u.p8[10]) << 16; fallthrough;
+				case 10: d += ((uint64)u.p8[9]) << 8; fallthrough;
+				case  9: d += (uint64)u.p8[8]; fallthrough;
+				case  8: c += u.p64[0];
+				case  7: c += ((uint64)u.p8[6]) << 48; fallthrough;
+				case  6: c += ((uint64)u.p8[5]) << 40; fallthrough;
+				case  5: c += ((uint64)u.p8[4]) << 32; fallthrough;
+				case  4: c += u.p32[0];
+				case  3: c += ((uint64)u.p8[2]) << 16; fallthrough;
+				case  2: c += ((uint64)u.p8[1]) << 8; fallthrough;
+				case  1: c += (uint64)u.p8[0];
 				case  0: c += sc_const; d += sc_const;
 			}
 

@@ -74,7 +74,7 @@ namespace beef_hash
 			uint64 hi, lo;
 			// Implementation of 64x64->128-bit multiplication by four 32x32->64 bit multiplication.
 			uint64 hv = v >> 32, hp = p >> 32;
-			uint64 lv = (uint32) v, lp = (uint32) p;
+			uint64 lv = (uint32)v, lp = (uint32)p;
 			uint64 rh =  hv * hp;
 			uint64 rm_0 = hv * lp;
 			uint64 rm_1 = hp * lv;
@@ -187,15 +187,16 @@ namespace beef_hash
 			int i;
 			int n;
 
-			result = _mum (result, _mum_block_start_prime);
+			result = _mum(result, _mum_block_start_prime);
 
 			while (len > _MUM_UNROLL_FACTOR * sizeof(uint64)) {
 				/*
 				** This loop could be vectorized when we have vector insns for 64x64->128-bit multiplication.
 				** AVX2 currently only have a vector insn for 4 32x32->64-bit multiplication.
 				*/
-				for (i = 0; i < _MUM_UNROLL_FACTOR; i++)
-					result ^= _mum(_mum_le!(((uint64*) str)[i]), _mum_primes[i]);
+				for (i = 0; i < _MUM_UNROLL_FACTOR; i++) {
+					result ^= _mum(_mum_le!(((uint64*)str)[i]), _mum_primes[i]);
+				}
 
 				len -= _MUM_UNROLL_FACTOR * sizeof(uint64);
 				str += _MUM_UNROLL_FACTOR * sizeof(uint64);
@@ -206,19 +207,52 @@ namespace beef_hash
 
 			n = len / sizeof(uint64);
 
-			for (i = 0; i < n; i++)
-				result ^= _mum(_mum_le!(((uint64*) str)[i]), _mum_primes[i]);
+			for (i = 0; i < n; i++) {
+				result ^= _mum(_mum_le!(((uint64*)str)[i]), _mum_primes[i]);
+			}
 
-			len -= n * sizeof(uint64); str += n * sizeof(uint64);
+			len -= n * sizeof(uint64);
+			str += n * sizeof(uint64);
+
 			switch(len)
 			{
-				case 7: u64 = _mum_le32!(*(uint32*)str); u64 |= (uint64)str[4] << 32; u64 |= (uint64)str[5] << 40; u64 |= (uint64)str[6] << 48; return result ^ _mum(u64, _mum_tail_prime);
-				case 6: u64 = _mum_le32!(*(uint32*)str); u64 |= (uint64)str[4] << 32; u64 |= (uint64) str[5] << 40; return result ^ _mum(u64, _mum_tail_prime);
-				case 5: u64 = _mum_le32!(*(uint32*) str); u64 |= (uint64) str[4] << 32; return result ^ _mum(u64, _mum_tail_prime);
-				case 4: u64 = _mum_le32!(*(uint32*) str); return result ^ _mum(u64, _mum_tail_prime);
-				case 3: u64 = (uint8)str[0]; u64 |= (uint64) str[1] << 8; u64 |= (uint64) str[2] << 16; return result ^ _mum(u64, _mum_tail_prime);
-				case 2: u64 = (uint8)str[0]; u64 |= (uint64) str[1] << 8; return result ^ _mum(u64, _mum_tail_prime);
-				case 1: u64 = (uint8)str[0]; return result ^ _mum(u64, _mum_tail_prime);
+				case 7: {
+					u64 = _mum_le32!(*(uint32*)str);
+					u64 |= (uint64)str[4] << 32;
+					u64 |= (uint64)str[5] << 40;
+					u64 |= (uint64)str[6] << 48;
+					return result ^ _mum(u64, _mum_tail_prime);
+				}
+				case 6: {
+					u64 = _mum_le32!(*(uint32*)str);
+					u64 |= (uint64)str[4] << 32;
+					u64 |= (uint64)str[5] << 40;
+					return result ^ _mum(u64, _mum_tail_prime);
+				}
+				case 5: {
+					u64 = _mum_le32!(*(uint32*)str);
+					u64 |= (uint64)str[4] << 32;
+					return result ^ _mum(u64, _mum_tail_prime);
+				}
+				case 4: {
+					u64 = _mum_le32!(*(uint32*)str);
+					return result ^ _mum(u64, _mum_tail_prime);
+				}
+				case 3: {
+					u64 = (uint8)str[0];
+					u64 |= (uint64)str[1] << 8;
+					u64 |= (uint64)str[2] << 16;
+					return result ^ _mum(u64, _mum_tail_prime);
+				}
+				case 2: {
+					u64 = (uint8)str[0];
+					u64 |= (uint64)str[1] << 8;
+					return result ^ _mum(u64, _mum_tail_prime);
+				}
+				case 1: {
+					u64 = (uint8)str[0];
+					return result ^ _mum(u64, _mum_tail_prime);
+				}
 			}
 
 			return result;
@@ -277,10 +311,10 @@ namespace beef_hash
 		private static uint64 _mum_next_factor()
 		{
 			uint64 start = 0;
-			int i;
 			
-			for (i = 0; i < 8; i++)
+			for (var i = 0; i < 8; i++) {
 				start = (start << 8) | (uint32)(rand.NextS32() % 256);
+			}
 
 			return start;
 		}
@@ -290,8 +324,6 @@ namespace beef_hash
 		// Set random multiplicators depending on SEED.
 		[Inline]
 		public static void Hash_randomize(uint64 seed) {
-			int i;
-
 			rand = new .((int)seed); // srand(seed); // Close enough
 			_mum_hash_step_prime = _mum_next_factor();
 			_mum_key_step_prime = _mum_next_factor();
@@ -301,8 +333,9 @@ namespace beef_hash
 			_mum_unroll_prime = _mum_next_factor();
 			_mum_tail_prime = _mum_next_factor();
 
-			for (i = 0; i < 16; i++)
+			for (var i = 0; i < 16; i++) {
 				_mum_primes[i] = _mum_next_factor();
+			}
 		}
 
 		// Start hashing data with SEED.  Return the state.

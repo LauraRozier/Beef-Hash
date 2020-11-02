@@ -139,18 +139,18 @@ namespace beef_hash
 
 				switch (len)
 				{
-				    case 12: c += k[2]; b += k[1]; a += k[0]; break;
-				    case 11: c += k[2] & 0xFFFFFF; b += k[1]; a += k[0]; break;
-				    case 10: c += k[2] & 0xFFFF; b += k[1]; a += k[0]; break;
-				    case  9: c += k[2] & 0xFF; b += k[1]; a += k[0]; break;
-				    case  8: b += k[1]; a += k[0]; break;
-				    case  7: b += k[1] & 0xFFFFFF; a += k[0]; break;
-				    case  6: b += k[1] & 0xFFFF; a += k[0]; break;
-				    case  5: b += k[1] & 0xFF; a += k[0]; break;
-				    case  4: a += k[0]; break;
-				    case  3: a += k[0] & 0xFFFFFF; break;
-				    case  2: a += k[0] & 0xFFFF; break;
-				    case  1: a += k[0] & 0xFF; break;
+				    case 12: c += k[2]; b += k[1]; a += k[0];
+				    case 11: c += k[2] & 0xFFFFFF; b += k[1]; a += k[0];
+				    case 10: c += k[2] & 0xFFFF; b += k[1]; a += k[0];
+				    case  9: c += k[2] & 0xFF; b += k[1]; a += k[0];
+				    case  8: b += k[1]; a += k[0];
+				    case  7: b += k[1] & 0xFFFFFF; a += k[0];
+				    case  6: b += k[1] & 0xFFFF; a += k[0];
+				    case  5: b += k[1] & 0xFF; a += k[0];
+				    case  4: a += k[0];
+				    case  3: a += k[0] & 0xFFFFFF;
+				    case  2: a += k[0] & 0xFFFF;
+				    case  1: a += k[0] & 0xFF;
 				    case  0: return c;              /* zero length strings require no mixing */
 				}
 			} else {
@@ -169,18 +169,18 @@ namespace beef_hash
 				/*-------------------------------- last block: affect all 32 bits of (c) */
 				switch(len)                      /* all the case statements fall through */
 				{
-					case 12: c += ((uint32)k[11]) << 24;
-					case 11: c += ((uint32)k[10]) << 16;
-					case 10: c += ((uint32)k[9]) << 8;
-					case  9: c += k[8];
-					case  8: b += ((uint32)k[7]) << 24;
-					case  7: b += ((uint32)k[6]) << 16;
-					case  6: b += ((uint32)k[5]) << 8;
-					case  5: b += k[4];
-					case  4: a += ((uint32)k[3]) << 24;
-					case  3: a += ((uint32)k[2]) << 16;
-					case  2: a += ((uint32)k[1]) << 8;
-					case  1: a += k[0]; break;
+					case 12: c += ((uint32)k[11]) << 24; fallthrough;
+					case 11: c += ((uint32)k[10]) << 16; fallthrough;
+					case 10: c += ((uint32)k[9]) << 8; fallthrough;
+					case  9: c += k[8]; fallthrough;
+					case  8: b += ((uint32)k[7]) << 24; fallthrough;
+					case  7: b += ((uint32)k[6]) << 16; fallthrough;
+					case  6: b += ((uint32)k[5]) << 8; fallthrough;
+					case  5: b += k[4]; fallthrough;
+					case  4: a += ((uint32)k[3]) << 24; fallthrough;
+					case  3: a += ((uint32)k[2]) << 16; fallthrough;
+					case  2: a += ((uint32)k[1]) << 8; fallthrough;
+					case  1: a += k[0];
 					case  0: return c;
 				}
 			}

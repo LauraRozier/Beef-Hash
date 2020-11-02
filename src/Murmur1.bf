@@ -45,8 +45,8 @@ namespace beef_hash
 			//----------
 			switch(len)
 			{
-				case 3: h += ((uint32)data[2]) << 16;
-				case 2: h += ((uint32)data[1]) << 8;
+				case 3: h += ((uint32)data[2]) << 16; fallthrough;
+				case 2: h += ((uint32)data[1]) << 8; fallthrough;
 				case 1: h += data[0]; h *= M_VAL; h ^= h >> R_VAL;
 			}
 
@@ -78,8 +78,8 @@ namespace beef_hash
 
 				switch(align)
 				{
-					case 1: t |= ((uint32)data[2]) << 16;
-					case 2: t |= ((uint32)data[1]) << 8;
+					case 1: t |= ((uint32)data[2]) << 16; fallthrough;
+					case 2: t |= ((uint32)data[1]) << 8; fallthrough;
 					case 3: t |= data[0];
 				}
 
@@ -110,9 +110,9 @@ namespace beef_hash
 
 				switch(pack)
 				{
-					case 3: d |= ((uint32)data[2]) << 16;
-					case 2: d |= ((uint32)data[1]) << 8;
-					case 1: d |= data[0];
+					case 3: d |= ((uint32)data[2]) << 16; fallthrough;
+					case 2: d |= ((uint32)data[1]) << 8; fallthrough;
+					case 1: d |= data[0]; fallthrough;
 					case 0: h += (t >> sr) | (d << sl); h *= M_VAL; h ^= h >> R_VAL;
 				}
 
@@ -133,8 +133,8 @@ namespace beef_hash
 			// Handle tail bytes
 			switch(len)
 			{
-				case 3: h += ((uint32)data[2]) << 16;
-				case 2: h += ((uint32)data[1]) << 8;
+				case 3: h += ((uint32)data[2]) << 16; fallthrough;
+				case 2: h += ((uint32)data[1]) << 8; fallthrough;
 				case 1: h += data[0]; h *= M_VAL; h ^= h >> R_VAL;
 			}
 
